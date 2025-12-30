@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Bundle Info -->
+    <key>CFBundleName</key>
+    <string>Talk</string>
+    <key>CFBundleDisplayName</key>
+    <string>Talk</string>
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+
+    <!-- macOS App -->
+    <key>LSMinimumSystemVersion</key>
+    <string>14.0</string>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.productivity</string>
+
+    <!-- Menu Bar Only (no dock icon) -->
+    <key>LSUIElement</key>
+    <true/>
+
+    <!-- Privacy Descriptions -->
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Talk needs microphone access to record your voice for transcription.</string>
+
+    <!-- Accessibility Description (shown in System Preferences) -->
+    <key>NSAppleEventsUsageDescription</key>
+    <string>Talk needs accessibility access to paste text into other applications.</string>
+
+    <!-- High Resolution -->
+    <key>NSHighResolutionCapable</key>
+    <true/>
+
+    <!-- Supports Secure Coding -->
+    <key>NSSupportsSecureCoding</key>
+    <true/>
+</dict>
+</plist>

@@ -1,0 +1,56 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Xcode user-specific
+xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# Swift Package Manager
+.build/
+Packages/
+Package.resolved
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Carthage
+Carthage/Build/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Distribution builds
+dist/
+
+# Temporary files
+*.swp
+*.swo
+*~
+\#*\#
+
+# IDE
+.idea/
+*.sublime-*
+
+# Whisper models (downloaded at runtime)
+*.bin
+*.mlmodelc/
+
+# Vendor directory (external dependencies)
+vendor/
+
+# Frameworks (if building locally)
+# Uncomment if you want to exclude the pre-built framework
+# Frameworks/
