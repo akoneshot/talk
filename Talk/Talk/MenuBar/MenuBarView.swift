@@ -139,7 +139,9 @@ struct MenuBarView: View {
         if !permissionManager.allPermissionsGranted {
             return "Permissions required"
         }
-        return "Press \(HotkeyManager.shared.primaryHotkey.description) to record"
+        let simple = HotkeyManager.shared.simpleHotkey.description
+        let advanced = HotkeyManager.shared.advancedHotkey.description
+        return "\(simple) = Simple, \(advanced) = Advanced"
     }
 
     // MARK: - Mode Section

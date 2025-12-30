@@ -26,12 +26,13 @@ struct MiniRecorderView: View {
 
                 Spacer()
 
-                // Mode indicator
-                Label(appState.processingMode.rawValue, systemImage: appState.processingMode.icon)
+                // Mode indicator (shows which hotkey's mode is active)
+                let activeMode = appState.currentSessionMode ?? appState.processingMode
+                Label(activeMode.rawValue, systemImage: activeMode.icon)
                     .font(.caption)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(.quaternary)
+                    .background(activeMode == .advanced ? Color.purple.opacity(0.3) : Color.gray.opacity(0.2))
                     .cornerRadius(4)
 
                 Spacer()

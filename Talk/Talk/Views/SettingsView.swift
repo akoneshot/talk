@@ -84,22 +84,42 @@ struct HotkeySettingsTab: View {
 
     var body: some View {
         Form {
-            Section("Primary Hotkey") {
-                Picker("Hotkey", selection: $hotkeyManager.primaryHotkey) {
+            Section("Simple Mode Hotkey") {
+                Picker("Hotkey", selection: $hotkeyManager.simpleHotkey) {
                     ForEach(HotkeyType.allCases, id: \.self) { key in
                         Text(key.description).tag(key)
                     }
                 }
 
-                Text("Press and hold this key to record (in push-to-talk mode)")
+                Text("Transcribes and removes filler words only")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Section("Advanced Mode Hotkey") {
+                Picker("Hotkey", selection: $hotkeyManager.advancedHotkey) {
+                    ForEach(HotkeyType.allCases, id: \.self) { key in
+                        Text(key.description).tag(key)
+                    }
+                }
+
+                Text("Transcribes and enhances with LLM (grammar, punctuation, structure)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
             Section {
-                Text("Tip: Right Command (⌘) is recommended as it's rarely used by other apps.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Tips:")
+                        .font(.caption.bold())
+                    Text("• Right Command (⌘) and Right Option (⌥) are recommended")
+                        .font(.caption)
+                    Text("• Hold the key while speaking, release to process")
+                        .font(.caption)
+                    Text("• Advanced mode requires Ollama or API key configured")
+                        .font(.caption)
+                }
+                .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)

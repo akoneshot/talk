@@ -82,6 +82,9 @@ class AppState: ObservableObject {
     // Error state (shown briefly, then cleared)
     @Published var lastError: String? = nil
 
+    // Current session processing mode (set by hotkey, overrides default)
+    @Published var currentSessionMode: ProcessingMode? = nil
+
     private var recordingTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
 
@@ -89,11 +92,12 @@ class AppState: ObservableObject {
 
     // MARK: - Recording Control
 
-    func startRecording() {
+    func startRecording(withMode mode: ProcessingMode? = nil) {
         guard !isRecording else { return }
 
         isRecording = true
         recordingDuration = 0
+        currentSessionMode = mode  // Store the mode for this recording session
 
         // Start duration timer
         recordingTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
@@ -169,6 +173,9 @@ class AppState: ObservableObject {
         isProcessing = true
         processingStatus = "Transcribing..."
 
+        // Use session mode if set (from hotkey), otherwise use default setting
+        let activeMode = currentSessionMode ?? processingMode
+
         do {
             // Transcribe with Whisper
             let transcription = try await WhisperState.shared.transcribe(audioURL: url)
@@ -176,7 +183,7 @@ class AppState: ObservableObject {
 
             // Apply processing based on mode
             let processedText: String
-            switch processingMode {
+            switch activeMode {
             case .simple:
                 processingStatus = "Cleaning up..."
                 processedText = SimpleCleanupProcessor.shared.process(transcription)
@@ -208,6 +215,7 @@ class AppState: ObservableObject {
 
             processingStatus = ""
             isProcessing = false
+            currentSessionMode = nil  // Clear session mode
 
             // Play success sound
             if playSoundFeedback {
@@ -218,6 +226,7 @@ class AppState: ObservableObject {
             processingStatus = "Error: \(error.localizedDescription)"
             lastError = error.localizedDescription
             isProcessing = false
+            currentSessionMode = nil  // Clear session mode
 
             if playSoundFeedback {
                 SoundManager.shared.playErrorSound()

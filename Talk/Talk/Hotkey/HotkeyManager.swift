@@ -7,29 +7,44 @@ import Combine
 class HotkeyManager: ObservableObject {
     static let shared = HotkeyManager()
 
-    // Settings - Use Published with UserDefaults observation for reliable updates
-    @Published var primaryHotkey: HotkeyType {
+    // Settings - Two hotkeys for different modes
+    @Published var simpleHotkey: HotkeyType {
         didSet {
-            UserDefaults.standard.set(primaryHotkey.rawValue, forKey: "primaryHotkey")
+            UserDefaults.standard.set(simpleHotkey.rawValue, forKey: "simpleHotkey")
+        }
+    }
+
+    @Published var advancedHotkey: HotkeyType {
+        didSet {
+            UserDefaults.standard.set(advancedHotkey.rawValue, forKey: "advancedHotkey")
         }
     }
 
     // State
     @Published var isHotkeyPressed = false
+    @Published var activeHotkeyMode: ProcessingMode? = nil  // Which mode's hotkey is currently pressed
 
     private var eventMonitor: Any?
     private var flagsMonitor: Any?
     private var isRecording = false
     private var keyDownTime: Date?
+    private var recordingMode: ProcessingMode? = nil  // Mode for current recording session
     private var cancellables = Set<AnyCancellable>()
 
     private init() {
         // Initialize from UserDefaults
-        if let savedValue = UserDefaults.standard.string(forKey: "primaryHotkey"),
+        if let savedValue = UserDefaults.standard.string(forKey: "simpleHotkey"),
            let hotkey = HotkeyType(rawValue: savedValue) {
-            self.primaryHotkey = hotkey
+            self.simpleHotkey = hotkey
         } else {
-            self.primaryHotkey = .rightCommand
+            self.simpleHotkey = .rightCommand
+        }
+
+        if let savedValue = UserDefaults.standard.string(forKey: "advancedHotkey"),
+           let hotkey = HotkeyType(rawValue: savedValue) {
+            self.advancedHotkey = hotkey
+        } else {
+            self.advancedHotkey = .rightOption
         }
 
         // Observe UserDefaults changes for sync across instances
@@ -37,10 +52,15 @@ class HotkeyManager: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 guard let self = self else { return }
-                if let savedValue = UserDefaults.standard.string(forKey: "primaryHotkey"),
+                if let savedValue = UserDefaults.standard.string(forKey: "simpleHotkey"),
                    let hotkey = HotkeyType(rawValue: savedValue),
-                   hotkey != self.primaryHotkey {
-                    self.primaryHotkey = hotkey
+                   hotkey != self.simpleHotkey {
+                    self.simpleHotkey = hotkey
+                }
+                if let savedValue = UserDefaults.standard.string(forKey: "advancedHotkey"),
+                   let hotkey = HotkeyType(rawValue: savedValue),
+                   hotkey != self.advancedHotkey {
+                    self.advancedHotkey = hotkey
                 }
             }
             .store(in: &cancellables)
@@ -75,23 +95,31 @@ class HotkeyManager: ObservableObject {
 
     private func handleFlagsChanged(_ event: NSEvent) {
         let flags = event.modifierFlags
+        let keyCode = event.keyCode
 
-        // Check if the configured hotkey is pressed
-        let isPressed = isHotkeyActive(flags: flags, keyCode: event.keyCode)
+        // Check both hotkeys
+        let simplePressed = isHotkeyActive(hotkey: simpleHotkey, flags: flags, keyCode: keyCode)
+        let advancedPressed = isHotkeyActive(hotkey: advancedHotkey, flags: flags, keyCode: keyCode)
 
-        if isPressed != isHotkeyPressed {
+        // Determine which mode's hotkey is active (simple takes priority if both somehow pressed)
+        let newMode: ProcessingMode? = simplePressed ? .simple : (advancedPressed ? .advanced : nil)
+        let isPressed = newMode != nil
+
+        if isPressed != isHotkeyPressed || (isPressed && newMode != activeHotkeyMode) {
+            let wasPressed = isHotkeyPressed
             isHotkeyPressed = isPressed
+            activeHotkeyMode = newMode
 
-            if isPressed {
-                handleHotkeyDown()
-            } else {
+            if isPressed && !wasPressed {
+                handleHotkeyDown(mode: newMode!)
+            } else if !isPressed && wasPressed {
                 handleHotkeyUp()
             }
         }
     }
 
-    private func isHotkeyActive(flags: NSEvent.ModifierFlags, keyCode: UInt16) -> Bool {
-        switch primaryHotkey {
+    private func isHotkeyActive(hotkey: HotkeyType, flags: NSEvent.ModifierFlags, keyCode: UInt16) -> Bool {
+        switch hotkey {
         case .rightCommand:
             return keyCode == kVK_RightCommand && flags.contains(.command)
         case .leftCommand:
@@ -113,13 +141,14 @@ class HotkeyManager: ObservableObject {
 
     // MARK: - Hotkey Actions
 
-    private func handleHotkeyDown() {
+    private func handleHotkeyDown(mode: ProcessingMode) {
         keyDownTime = Date()
+        recordingMode = mode
 
         switch AppState.shared.recordingMode {
         case .pushToTalk:
-            // Start recording immediately
-            startRecording()
+            // Start recording immediately with the specified processing mode
+            startRecording(processingMode: mode)
         case .toggle:
             // Do nothing on down - wait for up
             break
@@ -140,8 +169,8 @@ class HotkeyManager: ObservableObject {
                 // Short press - toggle
                 if isRecording {
                     stopRecording()
-                } else {
-                    startRecording()
+                } else if let mode = recordingMode {
+                    startRecording(processingMode: mode)
                 }
             }
         }
@@ -149,15 +178,16 @@ class HotkeyManager: ObservableObject {
         keyDownTime = nil
     }
 
-    private func startRecording() {
+    private func startRecording(processingMode: ProcessingMode) {
         guard !isRecording else { return }
         isRecording = true
-        AppState.shared.startRecording()
+        AppState.shared.startRecording(withMode: processingMode)
     }
 
     private func stopRecording() {
         guard isRecording else { return }
         isRecording = false
+        recordingMode = nil
         AppState.shared.stopRecording()
     }
 }
