@@ -66,6 +66,12 @@ struct PermissionsView: View {
                 if permissionManager.allPermissionsGranted {
                     Button {
                         dismiss()
+                        // Show registration if not already registered
+                        if !UserRegistrationService.shared.isRegistered {
+                            if let appDelegate = NSApp.delegate as? AppDelegate {
+                                appDelegate.showRegistration()
+                            }
+                        }
                     } label: {
                         Text("Get Started")
                             .frame(maxWidth: .infinity)

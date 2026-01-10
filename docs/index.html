@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DictAI - Voice to Text, Perfected</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cousine:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,700,800&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Causten';
+            src: url('https://fonts.cdnfonts.com/s/29901/Causten-Regular.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Causten';
+            src: url('https://fonts.cdnfonts.com/s/29901/Causten-Medium.woff') format('woff');
+            font-weight: 500;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Causten';
+            src: url('https://fonts.cdnfonts.com/s/29901/Causten-SemiBold.woff') format('woff');
+            font-weight: 600;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Causten';
+            src: url('https://fonts.cdnfonts.com/s/29901/Causten-Bold.woff') format('woff');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        :root {
+            --color-bg: #ffffff;
+            --color-bg-secondary: #f8fafc;
+            --color-surface: #ffffff;
+            --color-surface-elevated: #f1f5f9;
+            --color-border: #e2e8f0;
+            --color-text: #1e293b;
+            --color-text-secondary: #64748b;
+            --color-accent: #3b82f6;
+            --color-accent-light: #60a5fa;
+            --color-accent-dark: #2563eb;
+            --color-gradient-start: #06b6d4;
+            --color-gradient-end: #3b82f6;
+            --font-main: 'Causten', 'Cabinet Grotesk', 'Satoshi', system-ui, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1.25rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--color-text);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        nav {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--color-text);
+        }
+
+        .btn-download {
+            background: var(--color-text);
+            color: white;
+            padding: 0.6rem 1.4rem;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-download:hover {
+            background: var(--color-accent-dark);
+            transform: translateY(-1px);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg) 100%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 60%;
+            background: radial-gradient(ellipse at center top, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.25rem;
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-badge span {
+            color: var(--color-accent);
+            font-weight: 600;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+            animation: fadeInUp 0.8s ease-out 0.1s both;
+        }
+
+        .hero h1 .gradient-text {
+            background: linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--color-text-secondary);
+            max-width: 560px;
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end));
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: white;
+            color: var(--color-text);
+            padding: 1rem 2rem;
+            border-radius: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1px solid var(--color-border);
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-bg-secondary);
+            border-color: var(--color-text-secondary);
+        }
+
+        /* App Preview */
+        .app-preview {
+            margin-top: 4rem;
+            position: relative;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .app-window {
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: 20px;
+            padding: 1rem;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.1), 0 10px 30px rgba(0,0,0,0.05);
+            max-width: 420px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .window-controls span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .window-controls .close { background: #ff5f57; }
+        .window-controls .minimize { background: #febc2e; }
+        .window-controls .maximize { background: #28c840; }
+
+        .app-content {
+            background: var(--color-bg-secondary);
+            border-radius: 14px;
+            padding: 1.5rem;
+        }
+
+        .waveform {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            height: 60px;
+            margin-bottom: 1rem;
+        }
+
+        .waveform span {
+            width: 5px;
+            background: linear-gradient(to top, var(--color-gradient-start), var(--color-gradient-end));
+            border-radius: 3px;
+            animation: wave 1s ease-in-out infinite;
+        }
+
+        .waveform span:nth-child(1) { height: 20px; animation-delay: 0s; }
+        .waveform span:nth-child(2) { height: 35px; animation-delay: 0.1s; }
+        .waveform span:nth-child(3) { height: 50px; animation-delay: 0.2s; }
+        .waveform span:nth-child(4) { height: 40px; animation-delay: 0.3s; }
+        .waveform span:nth-child(5) { height: 55px; animation-delay: 0.4s; }
+        .waveform span:nth-child(6) { height: 30px; animation-delay: 0.5s; }
+        .waveform span:nth-child(7) { height: 45px; animation-delay: 0.6s; }
+        .waveform span:nth-child(8) { height: 25px; animation-delay: 0.7s; }
+
+        @keyframes wave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.5); }
+        }
+
+        .transcription-preview {
+            font-size: 0.95rem;
+            color: var(--color-text-secondary);
+            text-align: left;
+            line-height: 1.7;
+        }
+
+        .transcription-preview .highlight {
+            color: var(--color-text);
+            background: rgba(59, 130, 246, 0.1);
+            padding: 0.15rem 0.4rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 8rem 4rem;
+            position: relative;
+            background: var(--color-bg);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.01em;
+        }
+
+        .section-header p {
+            color: var(--color-text-secondary);
+            max-width: 500px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .feature-card:hover {
+            border-color: var(--color-accent);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
+        }
+
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(59, 130, 246, 0.1));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .feature-icon svg {
+            width: 26px;
+            height: 26px;
+            stroke: var(--color-accent);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--color-text);
+        }
+
+        .feature-card p {
+            color: var(--color-text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Privacy Section */
+        .privacy {
+            padding: 8rem 4rem;
+            background: var(--color-bg-secondary);
+            position: relative;
+        }
+
+        .privacy-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .privacy-text h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.01em;
+        }
+
+        .privacy-text h2 .gradient-text {
+            background: linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .privacy-text p {
+            color: var(--color-text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .privacy-features {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .privacy-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+        }
+
+        .privacy-feature svg {
+            width: 22px;
+            height: 22px;
+            stroke: #10b981;
+            fill: none;
+            stroke-width: 2.5;
+            flex-shrink: 0;
+        }
+
+        .privacy-visual {
+            display: flex;
+            justify-content: center;
+        }
+
+        .device-illustration {
+            width: 300px;
+            height: 220px;
+            background: white;
+            border-radius: 24px;
+            border: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+        }
+
+        .device-illustration::before {
+            content: '';
+            position: absolute;
+            inset: -16px;
+            border: 2px dashed var(--color-accent);
+            border-radius: 34px;
+            opacity: 0.3;
+            animation: pulse-border 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.02); }
+        }
+
+        .device-illustration .icon-lock {
+            width: 52px;
+            height: 52px;
+            stroke: var(--color-accent);
+            margin-bottom: 1rem;
+        }
+
+        .device-illustration span {
+            color: var(--color-text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 10rem 4rem;
+            text-align: center;
+            position: relative;
+            background: var(--color-bg);
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 80%;
+            background: radial-gradient(ellipse at center bottom, rgba(59, 130, 246, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cta h2 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .cta p {
+            color: var(--color-text-secondary);
+            font-size: 1.15rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 4rem;
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+            background: var(--color-bg);
+        }
+
+        footer a {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+            font-weight: 500;
+        }
+
+        footer a:hover {
+            color: var(--color-text);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem 1.5rem;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .hero {
+                padding: 6rem 1.5rem 4rem;
+            }
+
+            .features {
+                padding: 4rem 1.5rem;
+            }
+
+            .privacy {
+                padding: 4rem 1.5rem;
+            }
+
+            .privacy-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .privacy-visual {
+                order: -1;
+            }
+
+            .cta {
+                padding: 6rem 1.5rem;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="#" class="logo">
+            <div class="logo-icon">
+                <img src="app-icon.png" alt="DictAI">
+            </div>
+            DictAI
+        </a>
+        <nav>
+            <a href="#features">Features</a>
+            <a href="#privacy">Privacy</a>
+            <a href="https://github.com/akoneshot/talk">GitHub</a>
+            <a href="https://github.com/akoneshot/talk/releases/download/v1.0.0-pro/DictAI-Pro.dmg" class="btn-download">Download</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>100% Local Processing</span> · Your voice never leaves your Mac
+        </div>
+
+        <h1>Voice to text,<br><span class="gradient-text">perfected</span></h1>
+
+        <p class="hero-subtitle">
+            Transform speech into polished text instantly. Local Whisper transcription meets AI enhancement—private, fast, and seamlessly integrated.
+        </p>
+
+        <div class="hero-cta">
+            <a href="https://github.com/akoneshot/talk/releases/download/v1.0.0-pro/DictAI-Pro.dmg" class="btn-primary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download for macOS
+            </a>
+            <a href="#features" class="btn-secondary">
+                Learn more
+            </a>
+        </div>
+
+        <div class="app-preview">
+            <div class="app-window">
+                <div class="window-controls">
+                    <span class="close"></span>
+                    <span class="minimize"></span>
+                    <span class="maximize"></span>
+                </div>
+                <div class="app-content">
+                    <div class="waveform">
+                        <span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="transcription-preview">
+                        "So basically <span class="highlight">I think we should</span> move forward with the new design system that emphasizes <span class="highlight">clarity and consistency</span> across all platforms..."
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="section-header">
+            <h2>Everything you need, nothing you don't</h2>
+            <p>Powerful features designed for professionals who value their time and privacy.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/></svg>
+                </div>
+                <h3>Local Whisper Transcription</h3>
+                <p>OpenAI's Whisper runs entirely on your Mac with Metal acceleration. No internet required, no data sent anywhere.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                </div>
+                <h3>AI Text Enhancement</h3>
+                <p>Choose between local Ollama or cloud AI (Claude, OpenAI) to polish grammar, add punctuation, and structure your text.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 15h6M9 12h6"/></svg>
+                </div>
+                <h3>Two Processing Modes</h3>
+                <p><strong>Simple:</strong> Quick filler word removal. <strong>Advanced:</strong> Full LLM-powered enhancement with smart formatting.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h4M14 8h4M6 12h12M6 16h8"/></svg>
+                </div>
+                <h3>Global Hotkey</h3>
+                <p>Press your custom hotkey from any app to start recording. Choose toggle mode or push-to-talk—whatever fits your flow.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="6" rx="1"/><rect x="9" y="16" width="6" height="6" rx="1"/><path d="M12 8v8"/><path d="M8 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2M16 12h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2"/></svg>
+                </div>
+                <h3>Auto-Paste Anywhere</h3>
+                <p>Transcribed text automatically pastes wherever your cursor is. Works with any app—emails, documents, messages, code editors.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </div>
+                <h3>Multiple Whisper Models</h3>
+                <p>Choose from Tiny to Medium models. Balance speed vs. accuracy for your needs—from quick notes to detailed transcriptions.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="privacy" id="privacy">
+        <div class="privacy-content">
+            <div class="privacy-text">
+                <h2>Your voice stays <span class="gradient-text">yours</span></h2>
+                <p>
+                    In a world of cloud-first solutions, DictAI takes a different approach.
+                    Your audio is processed entirely on your Mac using Whisper's local models.
+                    No servers, no uploads, no compromises on privacy.
+                </p>
+                <p>
+                    Even AI enhancement can be fully local with Ollama—giving you the power
+                    of LLMs without sending a single word to the cloud.
+                </p>
+                <div class="privacy-features">
+                    <div class="privacy-feature">
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        <span>No audio recordings stored</span>
+                    </div>
+                    <div class="privacy-feature">
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        <span>No cloud dependency required</span>
+                    </div>
+                    <div class="privacy-feature">
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        <span>Works offline with local models</span>
+                    </div>
+                    <div class="privacy-feature">
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        <span>Open source and auditable</span>
+                    </div>
+                </div>
+            </div>
+            <div class="privacy-visual">
+                <div class="device-illustration">
+                    <svg class="icon-lock" viewBox="0 0 24 24" fill="none" stroke-width="1.5">
+                        <rect x="3" y="11" width="18" height="11" rx="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    <span>Processed on your device</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <h2>Ready to dictate smarter?</h2>
+        <p>Download DictAI and experience voice dictation that respects your privacy.</p>
+        <div class="cta-buttons">
+            <a href="https://github.com/akoneshot/talk/releases/download/v1.0.0-pro/DictAI-Pro.dmg" class="btn-primary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download for macOS
+            </a>
+            <a href="https://github.com/akoneshot/talk" class="btn-secondary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                View on GitHub
+            </a>
+        </div>
+    </section>
+
+    <footer>
+        <div>© 2025 DictAI. Made with care for macOS.</div>
+        <div class="footer-links">
+            <a href="PRIVACY.md">Privacy Policy</a>
+            <a href="https://github.com/akoneshot/talk/issues">Support</a>
+            <a href="https://github.com/akoneshot/talk">GitHub</a>
+        </div>
+    </footer>
+</body>
+</html>

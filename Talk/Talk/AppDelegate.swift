@@ -17,6 +17,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Show onboarding if first launch or permissions missing
         if !PermissionManager.shared.allPermissionsGranted {
             showOnboarding()
+        } else if !UserRegistrationService.shared.isRegistered {
+            // Permissions granted but not registered - show registration
+            showRegistration()
         }
 
         // Load Whisper model
@@ -106,6 +109,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         onboardingWindow?.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    // MARK: - Registration
+
+    private var registrationWindow: NSWindow?
+
+    func showRegistration() {
+        if registrationWindow == nil {
+            let window = NSWindow(
+                contentRect: NSRect(x: 0, y: 0, width: 450, height: 520),
+                styleMask: [.titled, .closable],
+                backing: .buffered,
+                defer: false
+            )
+            window.title = "DictAI Pro"
+            window.center()
+            window.identifier = NSUserInterfaceItemIdentifier("registration")
+
+            let hostingView = NSHostingView(rootView: RegistrationView())
+            window.contentView = hostingView
+
+            registrationWindow = window
+        }
+
+        registrationWindow?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
 }

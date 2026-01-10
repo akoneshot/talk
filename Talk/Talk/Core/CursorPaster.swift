@@ -35,14 +35,14 @@ class CursorPaster {
         }
 
         // Small delay to ensure clipboard is ready
-        usleep(50000)  // 50ms
+        usleep(100000)  // 100ms
 
         // Simulate Cmd+V
         simulatePaste()
 
-        // Restore original clipboard after a delay
-        if preserveClipboard {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        // Restore original clipboard after a longer delay
+        if preserveClipboard && !savedItems.isEmpty {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 restoreClipboard(savedItems)
             }
         }
@@ -80,30 +80,22 @@ class CursorPaster {
             return
         }
 
-        let source = CGEventSource(stateID: .hidSystemState)
-
-        // Virtual key codes
-        let kVK_Command: CGKeyCode = 0x37
+        let source = CGEventSource(stateID: .privateState)
         let kVK_V: CGKeyCode = 0x09
 
-        // Create key events
-        guard let cmdDown = CGEvent(keyboardEventSource: source, virtualKey: kVK_Command, keyDown: true),
-              let vDown = CGEvent(keyboardEventSource: source, virtualKey: kVK_V, keyDown: true),
-              let vUp = CGEvent(keyboardEventSource: source, virtualKey: kVK_V, keyDown: false),
-              let cmdUp = CGEvent(keyboardEventSource: source, virtualKey: kVK_Command, keyDown: false) else {
-            print("Failed to create key events")
-            return
+        // Create and post key down with Command modifier
+        if let keyDown = CGEvent(keyboardEventSource: source, virtualKey: kVK_V, keyDown: true) {
+            keyDown.flags = .maskCommand
+            keyDown.post(tap: .cgAnnotatedSessionEventTap)
         }
 
-        // Set command flag on V key events
-        vDown.flags = .maskCommand
-        vUp.flags = .maskCommand
+        usleep(50000)  // 50ms delay
 
-        // Post events
-        cmdDown.post(tap: .cghidEventTap)
-        vDown.post(tap: .cghidEventTap)
-        vUp.post(tap: .cghidEventTap)
-        cmdUp.post(tap: .cghidEventTap)
+        // Create and post key up with Command modifier
+        if let keyUp = CGEvent(keyboardEventSource: source, virtualKey: kVK_V, keyDown: false) {
+            keyUp.flags = .maskCommand
+            keyUp.post(tap: .cgAnnotatedSessionEventTap)
+        }
     }
 
     // MARK: - Clipboard Management
