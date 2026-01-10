@@ -107,6 +107,23 @@
             object-fit: cover;
         }
 
+        .logo-byline {
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: var(--color-text-secondary);
+            margin-left: 0.5rem;
+        }
+
+        .xd-link {
+            color: var(--color-accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .xd-link:hover {
+            text-decoration: underline;
+        }
+
         nav {
             display: flex;
             gap: 2.5rem;
@@ -591,6 +608,17 @@
             color: var(--color-text);
         }
 
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .footer-xd {
+            font-size: 0.8rem;
+            color: var(--color-text-secondary);
+        }
+
         .footer-links {
             display: flex;
             gap: 2rem;
@@ -658,11 +686,12 @@
                 <img src="app-icon.png" alt="DictAI">
             </div>
             DictAI
+            <span class="logo-byline">by <a href="https://xdigit.ai" class="xd-link">XD.AI</a></span>
         </a>
         <nav>
             <a href="#features">Features</a>
             <a href="#privacy">Privacy</a>
-            <a href="https://github.com/akoneshot/talk">GitHub</a>
+            <a href="https://xdigit.ai">XD.AI</a>
             <a href="https://github.com/akoneshot/talk/releases/download/v1.0.0-pro/DictAI-Pro.dmg" class="btn-download">Download</a>
         </nav>
     </header>
@@ -826,11 +855,14 @@
     </section>
 
     <footer>
-        <div>© 2025 DictAI. Made with care for macOS.</div>
+        <div class="footer-brand">
+            <span>© 2025 DictAI.</span>
+            <span class="footer-xd">A product by <a href="https://xdigit.ai" class="xd-link">XD.AI</a> — AI-native digital transformation</span>
+        </div>
         <div class="footer-links">
             <a href="PRIVACY.md">Privacy Policy</a>
             <a href="https://github.com/akoneshot/talk/issues">Support</a>
-            <a href="https://github.com/akoneshot/talk">GitHub</a>
+            <a href="https://xdigit.ai">XD.AI</a>
         </div>
     </footer>
 </body>
